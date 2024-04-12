@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelo Secuencial Simple</title>
+    <script src="tensorflow_cdn.js"></script>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+</head>
+
+<body>
+    <h1>TensorFlow.js Example</h1>
+
+    <h4>Formula: y= 2x + 6</h4>
+
+    <button id="trainBtn">Entrenar Modelo</button>
+
+    <input type="number">
+
+    <button id="predictBtn" disabled>Predecir</button>
+
+    <span></span>
+
+    <script>
+        const trainBtn = document.getElementById('trainBtn');
+
+        const predictBtn = document.getElementById('predictBtn');
+
+        async function learnLinear() {
+
+            const model = tf.sequential();
+            model.add(tf.layers.dense({ units: 1, inputShape: [1] }));
+            model.compile({ loss: 'meanSquaredError', optimizer: 'sgd' });
+
+            const xs = tf.tensor2d([-1, 0, 1, 2, 3, 4], [6, 1]);
+
+            const ys = tf.tensor2d([4, 6, 8, 10, 12, 14], [6, 1]);
+
+            trainBtn.addEventListener('click', async () => {
+                await model.fit(xs, ys, { epochs: 250 });
+                predictBtn.disabled = false;
+            });
+
+            predictBtn.addEventListener('click', async () => {
+                const input = document.querySelector('input').value;
+
+                const output = model.predict(tf.tensor2d([parseFloat(input)], [1, 1]));
+
+                document.querySelector('span').innerText = `El resultado de predecir para ${input} es: ${output}`;
+            });
+
+        }
+
+        learnLinear()
+    </script>
+</body>
+
+</html>
